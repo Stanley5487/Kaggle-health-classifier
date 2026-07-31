@@ -32,7 +32,7 @@ Kaggle_Health_Portfolio/
 ## 建模重點
 1. **模型選擇**:本專案最初採用 XGBoost，但經過多次實驗後發現LightGBM不僅模型效能較好，也能大幅縮短訓練與預測時間，因此改採LightGBM。推測原因在於：LightGBM預設以直方圖（histogram-based）演算法搭配leaf-wise（best-first，依最大增益分裂）生長樹，相較XGBoost預設的level-wise（depth-wise）生長方式，在本專案約69萬筆的訓練資下運算更快、能更快收斂。在葉節點數固定的前提下，leaf-wise已被證實能達到比level-wise更低的訓練損失，雖在資料過小的情況容易過擬和（見文末參考文獻 Shi, 2007；LightGBM 官方文件）。
 
->> 需要說明的是，「leaf-wise 更容易捕捉到 `stress_level`／`physical_activity_level` 等高度集中特徵的交互作用、因此準確度較好」這個推論，是筆者根據 leaf-wise演算法設計（優先分裂當下損失下降最多的節點，理論上能把更多分裂預算集中在高資訊量特徵路徑上）所做的個人推測，並非文獻中已證實的結論，未來可透過固定超參數、僅切換 `grow_policy`（XGBoost `lossguide` vs. `depthwise`）做對照實驗來驗證。
+>需要說明的是，「leaf-wise 更容易捕捉到 `stress_level`／`physical_activity_level` 等高度集中特徵的交互作用、因此準確度較好」這個推論，是筆者根據 leaf-wise演算法設計（優先分裂當下損失下降最多的節點，理論上能把更多分裂預算集中在高資訊量特徵路徑上）所做的個人推測，並非文獻中已證實的結論，未來可透過固定超參數、僅切換 `grow_policy`（XGBoost `lossguide` vs. `depthwise`）做對照實驗來驗證。
 
 2. **缺失值訊號**：特徵重要性分析發現，`sleep_duration`、`stress_level`／`physical_activity_level` 是否為缺失值，其重要性甚至超越BMI、心率等生理指標本身 —— 代表受測者「有沒有填寫」這件事本身就帶有風險行為訊號，而非隨機遺漏。因此在 `engineered_features()` 中明確地把缺失計數與交互情境編碼成特徵。
 
@@ -44,7 +44,7 @@ Kaggle_Health_Portfolio/
 
 5. **決策邊界調整**：訓練時的 `sqrt(balanced_weight)` 改變的是樹的分裂與葉節點估計（模型學到的 P(y|x) 本身）；推論時的 `1/sqrt(prior)` 則是對輸出機率做一個與樣本特徵無關、每個類別固定倍率的線性縮放。兩者作用層次不同，疊加起來會放大同一個方向的效果——這也是為什麼組合起來比單獨用任何一個效果都更明顯。
 
->>這個組合能大幅提升 LB 分數，關鍵在於這個競賽的評分指標看起來是偏向recall導向（尤其重視少數類別的recall），而不是log loss。也就是說，這個做法本質上是**刻意犧牲多數類別的precision，去換取少數類別的recall**，是針對評分指標刻意做的決策邊界調整，不是機率校準——`predict_proba` 乘完權重後也不再是有校準意義的真實機率。若指標換成log loss，這個做法很可能會讓表現變差，需要另外處理。
+>這個組合能大幅提升 LB 分數，關鍵在於這個競賽的評分指標看起來是偏向recall導向（尤其重視少數類別的recall），而不是log loss。也就是說，這個做法本質上是**刻意犧牲多數類別的precision，去換取少數類別的recall**，是針對評分指標刻意做的決策邊界調整，不是機率校準——`predict_proba` 乘完權重後也不再是有校準意義的真實機率。若指標換成log loss，這個做法很可能會讓表現變差，需要另外處理。
 
 ## 環境安裝
 
