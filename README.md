@@ -50,7 +50,7 @@ Kaggle_Health_Portfolio/
 
 ## 模型表現
 
-以下為訓練時使用 `sqrt(balanced_weight)` 加權後的分類報告（`classification_report`），從 `train.csv` 切出 80% 訓練 / 20% 測試集（`train_test_split`, `stratify=y`），共 690,088 筆。類別代碼：`0 = at-risk`、`1 = fit`、`2 = unhealthy`。此處為模型原始 `predict()` 輸出，**尚未套用**推論階段的 `1/sqrt(prior)` 機率校正。
+以下為模型訓練的分類報告（`classification_report`），從 `train.csv` 切出 80% 訓練 / 20% 測試集（`train_test_split`, `stratify=y`），共 690,088 筆。類別代碼：`0 = at-risk`、`1 = fit`、`2 = unhealthy`。此處模型，**尚未套用**推論階段的機率校正。
 
 **訓練集（552,070 筆）**
 
@@ -63,7 +63,7 @@ Kaggle_Health_Portfolio/
 | macro avg | 0.8994 | 0.9664 | 0.9306 | 552,070 |
 | weighted avg | 0.9740 | 0.9715 | 0.9722 | 552,070 |
 
-**測試集（138,018 筆，held-out，模型未見過）**
+**測試集（138,018 筆）**
 
 | 類別 | precision | recall | f1-score | support |
 |---|---|---|---|---|
