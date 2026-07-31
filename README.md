@@ -18,9 +18,9 @@ Kaggle_Health_Portfolio/
 │   ├── features.py              # 特徵工程 + GroupSleepDiffTransformer
 │   └── pipeline.py              # ColumnTransformer 前處理 Pipeline
 ├── notebooks/
-│   └── model_experiments.ipynb  # 最佳模型的完整實驗紀錄
-│   └── model_XGB_experiments.ipynb # XGB BaseLine model 
-│   └── model_XGB_experientss02.ipynb # XGB特徵工程實驗
+│   ├── model_experiments.ipynb  # 最佳模型的完整實驗紀錄
+│   ├── model_XGB_experiments.ipynb # XGB BaseLine model 
+│   └── model_XGB_experiments02.ipynb # XGB特徵工程實驗
 ├── models/
 │   └── health_lgb_mod3.pkl      # 訓練好的模型（由 main_train.py 產出）
 ├── main_train.py                # 一鍵訓練腳本
