@@ -22,7 +22,7 @@ Kaggle_Health_Portfolio/
 ├── models/
 │   └── health_lgb_mod3.pkl      # 訓練好的模型（由 main_train.py 產出）
 ├── main_train.py                # 一鍵訓練腳本
-├── main_inference.py            # 一鍵推論腳本（含 p=0.5 機率門檻推擠）
+├── main_inference.py            # 一鍵推論腳本
 ├── requirements.txt
 └── README.md
 ```
@@ -30,7 +30,7 @@ Kaggle_Health_Portfolio/
 `data/` 目錄不包含在 repo 中（見下方「取得資料」）。
 
 ## 建模重點
-1. 本專案最初採用 XGBoost，但經過多次實驗後發現LightGBM不僅模型效能較好，也能大幅縮短訓練與預測時間，因此改採LightGBM。推測原因在於：LightGBM預設以直方圖（histogram-based）演算法搭配leaf-wise（best-first，依最大增益分裂）生長樹，相較XGBoost預設的level-wise（depth-wise）生長方式，在本專案約69萬筆的訓練資下運算更快、能更快收斂。在葉節點數固定的前提下，leaf-wise已被證實能達到比level-wise更低的訓練損失，雖在資料過小的情況容易過擬和（見文末參考文獻 Shi, 2007；LightGBM 官方文件）。
+1. **模型選擇**:本專案最初採用 XGBoost，但經過多次實驗後發現LightGBM不僅模型效能較好，也能大幅縮短訓練與預測時間，因此改採LightGBM。推測原因在於：LightGBM預設以直方圖（histogram-based）演算法搭配leaf-wise（best-first，依最大增益分裂）生長樹，相較XGBoost預設的level-wise（depth-wise）生長方式，在本專案約69萬筆的訓練資下運算更快、能更快收斂。在葉節點數固定的前提下，leaf-wise已被證實能達到比level-wise更低的訓練損失，雖在資料過小的情況容易過擬和（見文末參考文獻 Shi, 2007；LightGBM 官方文件）。
 
    需要說明的是，「leaf-wise 更容易捕捉到 `stress_level`／`physical_activity_level` 等高度集中特徵的交互作用、因此準確度較好」這個推論，是筆者根據 leaf-wise演算法設計（優先分裂當下損失下降最多的節點，理論上能把更多分裂預算集中在高資訊量特徵路徑上）所做的個人推測，並非文獻中已證實的結論，未來可透過固定超參數、僅切換 `grow_policy`（XGBoost `lossguide` vs. `depthwise`）做對照實驗來驗證。
 
@@ -78,7 +78,7 @@ python main_inference.py
 
 - `notebooks/model_XGB_experiments.ipynb`：最初以 XGBoost 建立 baseline 的實驗過程，藉此找出 sqrt 加權策略與關鍵特徵，作為後續建模方向的依據。
 - `notebooks/model_XGB_experiments02.ipynb`：特徵工程實驗之一。此分析原本額外納入「缺失模式」（`sleep_duration`、`stress_level`、`physical_activity_level` 缺失型態組合）類別變數，但後續發現其貢獻度較低，因此予以剔除——保留各變數各自的缺失狀態即可涵蓋大部分訊息，不需要額外建立一個綜合的缺失模式欄位。
-- `notebooks/model_experiments.ipynb`：產出最終最佳模型（LightGBM）當下的完整流程，包含資料前處理定義、Optuna 5-fold CV 超參數搜尋（20 trials，以 multi-class log loss 為目標）、最終模型訓練與存檔。
+- `notebooks/model_experiments.ipynb`：產出最終最佳模型（LightGBM）的完整流程，包含資料處理定義、Optuna 5-fold CV 超參數搜尋（20 trials，以 multi-class log loss 為目標）、最終模型訓練與存檔。
 
 ## 參考文獻
 
