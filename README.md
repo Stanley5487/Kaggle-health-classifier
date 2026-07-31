@@ -50,7 +50,7 @@ Kaggle_Health_Portfolio/
 
 ## 模型表現
 
-以下為訓練時使用 `sqrt(balanced_weight)` 加權後的分類報告（`classification_report`），從 `train.csv` 切出 80% 訓練 / 20% 驗證集（`train_test_split`, `stratify=y`），共 690,088 筆。類別代碼：`0 = at-risk`、`1 = fit`、`2 = unhealthy`。此處為模型原始 `predict()` 輸出，**尚未套用**推論階段的 `1/sqrt(prior)` 機率校正。
+以下為訓練時使用 `sqrt(balanced_weight)` 加權後的分類報告（`classification_report`），從 `train.csv` 切出 80% 訓練 / 20% 測試集（`train_test_split`, `stratify=y`），共 690,088 筆。類別代碼：`0 = at-risk`、`1 = fit`、`2 = unhealthy`。此處為模型原始 `predict()` 輸出，**尚未套用**推論階段的 `1/sqrt(prior)` 機率校正。
 
 **訓練集（552,070 筆）**
 
@@ -63,7 +63,7 @@ Kaggle_Health_Portfolio/
 | macro avg | 0.8994 | 0.9664 | 0.9306 | 552,070 |
 | weighted avg | 0.9740 | 0.9715 | 0.9722 | 552,070 |
 
-**驗證集（138,018 筆，held-out，模型未見過）**
+**測試集（138,018 筆，held-out，模型未見過）**
 
 | 類別 | precision | recall | f1-score | support |
 |---|---|---|---|---|
@@ -74,7 +74,7 @@ Kaggle_Health_Portfolio/
 | macro avg | 0.8696 | 0.9332 | 0.8992 | 138,018 |
 | weighted avg | 0.9617 | 0.9584 | 0.9595 | 138,018 |
 
-驗證集的 macro recall（0.9332）明顯高於 macro precision（0.8696），正好印證前面第 4、5 點提到的設計取捨：`sqrt(balanced_weight)` 訓練讓少數類別（`fit`、`unhealthy`）的 recall 都拉到 0.91 以上，代價是這兩個類別的 precision 相對較低（誤將多數類別的樣本判成少數類別的情況變多）；訓練集與驗證集的數字落差不大，代表模型沒有明顯過擬合。
+測試集的 macro recall（0.9332）明顯高於 macro precision（0.8696），正好印證前面第 4、5 點提到的設計取捨：`sqrt(balanced_weight)` 訓練讓少數類別（`fit`、`unhealthy`）的 recall 都拉到 0.91 以上，代價是這兩個類別的 precision 相對較低（誤將多數類別的樣本判成少數類別的情況變多）；訓練集與測試集的數字落差不大，代表模型沒有明顯過擬合。
 
 ## 環境安裝
 
