@@ -1,4 +1,4 @@
-"""建立資料前處理 Pipeline（ColumnTransformer）。"""
+"""建立資料預處理Pipeline（ColumnTransformer）。"""
 from sklearn.compose import ColumnTransformer, make_column_selector
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
@@ -17,7 +17,6 @@ NOMINAL_COLS = ['diet_type', 'gender', 'stress_activity_interaction']
 
 
 def build_preprocessor():
-    """回傳完整前處理 Pipeline：特徵工程 -> 群組偏離度 -> 編碼。"""
     ordinal_transformer = Pipeline(steps=[
         ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
         ('encoder', OrdinalEncoder(

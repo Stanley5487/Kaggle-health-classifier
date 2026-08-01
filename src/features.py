@@ -1,4 +1,4 @@
-"""特徵工程：缺失值旗標、壓力x活動交互特徵，以及群組相對偏離度轉換器。"""
+"""特徵工程：缺失值、壓力x活動交互特徵，以及高風險族群的特定特徵相對偏離度。"""
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 
@@ -34,8 +34,8 @@ class GroupSleepDiffTransformer(BaseEstimator, TransformerMixin):
     以情境群體平均為基準，計算相對偏離度，讓模型看到的是「相對脆弱程度」而非
     單純的絕對數值。
 
-    Ablation 結果：預設只對 `sleep_duration` 做偏離度轉換為最佳設定
-    （public LB 0.94960）；額外加入 `bmi` / `step_count` / `exercise_duration`
+    結果：預設只對 `sleep_duration` 做偏離度轉換為最佳設定
+    （public LB 0.94960）；額外加入 `bmi` / `step_count` / `exercise_duration`(這幾個都是在baseline model較為重要的參數)進行測試
     三欄位反而讓分數略降至 0.94937，推測為過擬合雜訊，因此不建議擴充。
     """
 

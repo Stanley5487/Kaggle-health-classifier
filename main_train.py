@@ -4,7 +4,7 @@
 以 multi_logloss 為目標）所得的最佳組合，對應 public LB 0.94960 的最佳提交版本。
 訓練時對三個類別使用 sqrt(balanced sample_weight) 加權，緩解類別不平衡。
 
-註:原本是是永XGB，但發現LGB更準，故在此只放LGB，XGB的訓練過程可參考notebook中的檔案
+註:原本是是用XGB，但發現LGB更準，故在此只放LGB，XGB的訓練過程可參考notebook中的檔案
 """
 import json
 from pathlib import Path
