@@ -40,23 +40,31 @@ Kaggle_Health_Portfolio/
 
 3. **相對偏離度（`GroupSleepDiffTransformer`）**：單看睡眠時數的絕對值無法反映真實生理負擔 —— 同樣睡6小時，在「高壓 + 久坐」狀況下可能是嚴重不足，在「低壓 + 規律運動」下卻可能相對充裕。此特徵計算觀察值與相同「壓力 x 活動」群體 $g$ 平均值的偏離度（此為相對脆弱程度，非絕對值）：
 
+
    $$x'_{\text{sleep\_duration}} = x_{\text{sleep\_duration}} - \bar{x}_{\text{sleep\_duration} \mid g}$$
+
 
 > **不同特徵的實驗結果**：只對 `sleep_duration` 做偏離度轉換是最佳設定（LB 0.94960）；額外把 `bmi`／`step_count`／`exercise_duration` 也做同樣轉換，LB分數反而略降至 0.94937（雖在本地測試，整體f1-score是有略微提升），因此預設保留單欄位版本。
 
 4. **類別不平衡處理**：訓練時對 sample weight 使用 `sqrt(balanced_weight)`（而非原始預設的倒數），避免權重過度放大稀有類別導致雜訊被過度學習。sklearn `compute_sample_weight('balanced', y)` 對類別 $i$ 算出的權重為：
 
+
    $$w_i = \frac{n_{\text{samples}}}{n_{\text{classes}} \times n_i}$$
 
-   本專案實際使用的是它的開根號版本：
+
+   接著本專案對其開根號：
+
 
    $$w_i' = \sqrt{w_i}$$
 
-   實驗對照：改用完整 $w_i$（未開根號）時，準確率與召回率皆較差，整體 F1-score 也不如 $w_i'$ 版本（實驗過程可參考 `notebooks/model_XGB_experiments.ipynb`）。此作法與過去文獻的發現一致（Bakirarar & Elhan, 2023，見文末參考文獻）。
+
+   經測試，原始的 $w_i$（未開根號），準確率與召回率皆較差，整體 F1-score 也不如 $w_i'$ 版本（實驗過程可參考 `notebooks/model_XGB_experiments.ipynb`）。此作法與過去文獻的發現一致（Bakirarar & Elhan, 2023）。
 
 5. **決策邊界調整**：訓練時的 `sqrt(balanced_weight)` 改變的是樹的分裂與葉節點估計（模型學到的 $P(y \mid x)$ 本身）；推論時則是對輸出機率做一個與樣本特徵無關、每個類別固定倍率的線性縮放：
 
+
    $$P'(y \mid x) = P(y \mid x) \cdot \frac{w_y}{\text{mean}(w)}, \quad w_y = \frac{1}{\sqrt{\hat{p}(y)}}$$
+
 
    其中 $\hat{p}(y)$ 是從 `train.csv` 算出的各類別真實比例（exact prior）。兩者作用層次不同，疊加起來會放大同一個方向的效果——這也是為什麼組合起來比單獨用任何一個效果都更明顯。
 
