@@ -4,7 +4,7 @@
 
 ## 專案簡介
 
-這是一個Kaggle Playground Series（`playground-series-s6e7`）健康狀況三分類競賽的專案，其將受測者分類為 `at-risk` / `fit` / `unhealthy`。Public leaderboard最佳成績為 **0.94960**。
+這是一個Kaggle Playground Series（`playground-series-s6e7`）健康狀況三分類競賽的專案，其將受測者分類為 `at-risk` / `fit` / `unhealthy`。Public leaderboard最佳成績為 **0.94960**；Private Score為 **0.95010**；最後排名為約 **前20%**
 這個repo只是從原始的所有實驗中整理出來的乾淨版本，只保留最終有效的pipeline、模型與腳本，實驗過程中的探索性測試僅包含部分內容。
 
 ## 專案結構
@@ -38,10 +38,7 @@ Kaggle_Health_Portfolio/
 
 2. **缺失值訊號**：特徵重要性分析發現，`sleep_duration`、`stress_level`／`physical_activity_level` 是否為缺失值，其重要性甚至超越BMI、心率等生理指標本身 —— 代表受測者「有沒有填寫」這件事本身就帶有風險行為訊號，而非隨機遺漏。因此在 `engineered_features()` 中明確地把缺失計數與交互情境編碼成特徵。
 
-3. **相對偏離度（`GroupSleepDiffTransformer`）**：單看睡眠時數的絕對值無法反映真實生理負擔 —— 同樣睡6小時，在「高壓 + 久坐」狀況下可能是嚴重不足，在「低壓 + 規律運動」下卻可能相對充裕。此特徵計算觀察值與相同「壓力 x 活動」群體 $g$ 平均值的偏離度（此為相對脆弱程度，非絕對值）：
-
-
-   $$x'_{\text{sleep\_duration}} = x_{\text{sleep\_duration}} - \bar{x}_{\text{sleep\_duration} \mid g}$$
+3. **相對偏離度（`GroupSleepDiffTransformer`）**：單看睡眠時數的絕對值無法反映真實生理負擔 —— 同樣睡6小時，在「高壓 + 久坐」狀況下可能是嚴重不足，在「低壓 + 規律運動」下卻可能相對充裕。此特徵計算觀察值與相同「壓力 x 活動」群體睡眠時間平均值的偏離度（此為相對脆弱程度，非絕對值）：
 
 
 > **不同特徵的實驗結果**：只對 `sleep_duration` 做偏離度轉換是最佳設定（LB 0.94960）；額外把 `bmi`／`step_count`／`exercise_duration` 也做同樣轉換，LB分數反而略降至 0.94937（雖在本地測試，整體f1-score是有略微提升），因此預設保留單欄位版本。
@@ -52,7 +49,7 @@ Kaggle_Health_Portfolio/
    $$w_i = \frac{n_{\text{samples}}}{n_{\text{classes}} \times n_i}$$
 
 
-   接著本專案對其開根號：
+   接著對其開根號：
 
 
    $$w_i' = \sqrt{w_i}$$
