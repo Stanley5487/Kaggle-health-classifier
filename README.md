@@ -4,7 +4,8 @@
 
 ## 專案簡介
 
-這是一個Kaggle Playground Series（`playground-series-s6e7`）健康狀況三分類競賽的專案，其將受測者分類為 `at-risk` / `fit` / `unhealthy`。Public leaderboard最佳成績為 **0.94960**；Private Score為 **0.95010**；最後排名為約 **前20%**
+這是一個Kaggle Playground Series（`playground-series-s6e7`）健康狀況三分類競賽的專案，其將受測者分類為 `at-risk` / `fit` / `unhealthy`。Public leaderboard最佳成績為 **0.94960**；Private Score為 **0.95010**；最後排名為約 **前20%**。
+
 這個repo只是從原始的所有實驗中整理出來的乾淨版本，只保留最終有效的pipeline、模型與腳本，實驗過程中的探索性測試僅包含部分內容。
 
 ## 專案結構
